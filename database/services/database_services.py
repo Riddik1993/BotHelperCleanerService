@@ -16,21 +16,23 @@ class DbService:
         engine = create_async_engine(url=self.db_dsn)
         self.session_maker = async_sessionmaker(engine, expire_on_commit=False)
 
-    async def delete_expired_lessons(
-            self,
-            lessons_ttl_days: int
-    ):
-        current_dttm_msc = datetime.now(ZoneInfo('Europe/Moscow'))
+    async def delete_expired_lessons(self, lessons_ttl_days: int):
+        """
+        Метод удаляет из базы данных прошедшие уроки
+        :param lessons_ttl_days: Время жизни урока после того, как он прошел
+        """
+        current_dttm_msc = datetime.now(ZoneInfo("Europe/Moscow"))
 
         select_stmt = (
             select(Lesson)
-            .where(Lesson.lesson_dttm < current_dttm_msc - timedelta(days=lessons_ttl_days))
+            .where(
+                Lesson.lesson_dttm < current_dttm_msc - timedelta(days=lessons_ttl_days)
+            )
             .join(Subject)
         )
 
-        delete_stmt = (
-            delete(Lesson)
-            .where(Lesson.lesson_dttm < current_dttm_msc - timedelta(days=lessons_ttl_days))
+        delete_stmt = delete(Lesson).where(
+            Lesson.lesson_dttm < current_dttm_msc - timedelta(days=lessons_ttl_days)
         )
 
         async with self.session_maker() as session:
@@ -40,6 +42,8 @@ class DbService:
                 print(l.lesson_dttm)
             lessons_to_delete_count = len(lessons_to_delete)
             await session.execute(delete_stmt)
-            logger.info(f"Succesfully deleted {lessons_to_delete_count} lessons from db")
+            logger.info(
+                f"Succesfully deleted {lessons_to_delete_count} lessons from db"
+            )
             await session.commit()
             await session.close()
