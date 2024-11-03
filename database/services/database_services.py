@@ -4,6 +4,7 @@ from zoneinfo import ZoneInfo
 from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
+from database.models.homework import Homework
 from database.models.lesson import Lesson
 from loguru import logger
 
@@ -45,5 +46,29 @@ class DbService:
             logger.info(
                 f"Succesfully deleted {lessons_to_delete_count} lessons from db"
             )
+            await session.commit()
+            await session.close()
+
+    async def delete_expired_tasks(self, task_ttl_days: int):
+        """
+        Метод удаляет из базы данных неактуальные домашние задания
+        :param task_ttl_days: Время жизни домашнего задания после того, как оно было создано
+        """
+        current_dttm_msc = datetime.now(ZoneInfo("Europe/Moscow"))
+
+        select_stmt = select(Homework).where(
+            Homework.created_at < current_dttm_msc - timedelta(days=task_ttl_days)
+        )
+
+        delete_stmt = delete(Homework).where(
+            Homework.created_at < current_dttm_msc - timedelta(days=task_ttl_days)
+        )
+
+        async with self.session_maker() as session:
+            select_result = await session.execute(select_stmt)
+            homework_to_delete = select_result.scalars().all()
+            homework_to_delete_count = len(homework_to_delete)
+            await session.execute(delete_stmt)
+            logger.info(f"Succesfully deleted {homework_to_delete_count} tasks from db")
             await session.commit()
             await session.close()
