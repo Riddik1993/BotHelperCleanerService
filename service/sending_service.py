@@ -10,7 +10,13 @@ class SendingService:
         self.arguments = arguments
         self.admin_id = admin_id
 
-    async def send_lessons_notification(self, deleted_lessons_count: int, deleted_tasks_count: int):
+    async def send_lessons_notification(self, deleted_lessons_count: int, deleted_tasks_count: int) -> None:
+        """
+        Метод оповещает администратора об очистке базы данных.
+        :param deleted_lessons_count: Количество успешно удаленных уроков
+        :param deleted_tasks_count:   Количество успешно удаленных заданий
+        :return:
+        """
         msg = "<b>Сервис очистки базы данных</b>.\n\n" + \
               f"Удалено прошедших уроков {deleted_lessons_count}.\n" + \
               f"Удалено устаревших заданий {deleted_tasks_count}.\n\n" + \

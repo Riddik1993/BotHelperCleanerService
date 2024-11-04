@@ -21,6 +21,7 @@ class DbService:
         """
         Метод удаляет из базы данных прошедшие уроки
         :param lessons_ttl_days: Время жизни урока после того, как он прошел
+        :return: Количество успешно удаленных уроков
         """
         current_dttm_msc = datetime.now(ZoneInfo("Europe/Moscow"))
 
@@ -52,6 +53,7 @@ class DbService:
         """
         Метод удаляет из базы данных неактуальные домашние задания
         :param task_ttl_days: Время жизни домашнего задания после того, как оно было создано
+        :return: Количество успешно удаленных заданий
         """
         current_dttm_msc = datetime.now(ZoneInfo("Europe/Moscow"))
 
