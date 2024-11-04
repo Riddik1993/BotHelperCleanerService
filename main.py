@@ -18,7 +18,7 @@ async def main():
     bot = Bot(
         token=config.telegram.token, default=DefaultBotProperties(parse_mode="HTML")
     )
-    sending_service = SendingService(bot, config.telegram.admin_id)
+    sending_service = SendingService(bot, arguments, config.telegram.admin_id)
     logger.info(
         f"Cleaner service started. Lessons ttl: {arguments.lessons_ttl_days} days, "
         f"Tasks ttl: {arguments.tasks_ttl_days} days"
