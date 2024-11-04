@@ -4,11 +4,11 @@ from zoneinfo import ZoneInfo
 from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
-from service.database.models.homework import Homework
-from service.database.models.lesson import Lesson
+from services.database.models.homework import Homework
+from services.database.models.lesson import Lesson
 from loguru import logger
 
-from service.database.models.subject import Subject
+from services.database.models.subject import Subject
 
 
 class DbService:

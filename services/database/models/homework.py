@@ -2,12 +2,13 @@ from datetime import datetime
 from sqlalchemy import DateTime, Text, func, Integer
 from sqlalchemy.orm import Mapped, mapped_column
 
-from service.database.models.base import Base
+from services.database.models.base import Base
 
 
-class Reminder(Base):
-    __tablename__ = "reminders"
+class Homework(Base):
+    __tablename__ = "homework"
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    student_id: Mapped[int] = mapped_column(Integer)
     text: Mapped[str] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
