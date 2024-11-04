@@ -1,9 +1,9 @@
 from datetime import datetime
-from sqlalchemy import DateTime, Text, func, Integer, ForeignKey
+from sqlalchemy import DateTime, Integer, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from database.models.base import Base
-from database.models.mixins import TimestampMixin
+from service.database.models.base import Base
+from service.database.models.mixins import TimestampMixin
 
 
 class Lesson(Base, TimestampMixin):

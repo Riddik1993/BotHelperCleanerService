@@ -1,8 +1,8 @@
 from sqlalchemy import Integer, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from database.models.base import Base
-from database.models.mixins import TimestampMixin
+from service.database.models.base import Base
+from service.database.models.mixins import TimestampMixin
 
 
 class Subject(Base, TimestampMixin):

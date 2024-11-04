@@ -4,11 +4,11 @@ from zoneinfo import ZoneInfo
 from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
-from database.models.homework import Homework
-from database.models.lesson import Lesson
+from service.database.models.homework import Homework
+from service.database.models.lesson import Lesson
 from loguru import logger
 
-from database.models.subject import Subject
+from service.database.models.subject import Subject
 
 
 class DbService:
@@ -17,7 +17,7 @@ class DbService:
         engine = create_async_engine(url=self.db_dsn)
         self.session_maker = async_sessionmaker(engine, expire_on_commit=False)
 
-    async def delete_expired_lessons(self, lessons_ttl_days: int):
+    async def delete_expired_lessons(self, lessons_ttl_days: int) -> int:
         """
         Метод удаляет из базы данных прошедшие уроки
         :param lessons_ttl_days: Время жизни урока после того, как он прошел
@@ -39,8 +39,6 @@ class DbService:
         async with self.session_maker() as session:
             select_result = await session.execute(select_stmt)
             lessons_to_delete = select_result.scalars().all()
-            for l in lessons_to_delete:
-                print(l.lesson_dttm)
             lessons_to_delete_count = len(lessons_to_delete)
             await session.execute(delete_stmt)
             logger.info(
@@ -48,8 +46,9 @@ class DbService:
             )
             await session.commit()
             await session.close()
+        return lessons_to_delete_count
 
-    async def delete_expired_tasks(self, task_ttl_days: int):
+    async def delete_expired_tasks(self, task_ttl_days: int) -> int:
         """
         Метод удаляет из базы данных неактуальные домашние задания
         :param task_ttl_days: Время жизни домашнего задания после того, как оно было создано
@@ -72,3 +71,4 @@ class DbService:
             logger.info(f"Succesfully deleted {homework_to_delete_count} tasks from db")
             await session.commit()
             await session.close()
+        return homework_to_delete_count
